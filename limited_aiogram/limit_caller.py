@@ -46,7 +46,7 @@ class LimitCaller:
     async def call(self, chat_id: int, coro: Coroutine):
         """Call the method"""
 
-        if chat_id < 0:
+        if int(chat_id) < 0:
             return await self._call_with_limit(chat_id, coro, self.groups, 0.32, 20)
         else:
             return await self._call_with_limit(chat_id, coro, self.chats, 0.99, 1)
