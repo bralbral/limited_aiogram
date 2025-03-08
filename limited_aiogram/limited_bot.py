@@ -1,4 +1,4 @@
-from typing import Optional, TypeVar
+from typing import Optional, TypeVar, Union
 
 from aiogram.methods import TelegramMethod, GetChat
 from aiogram import Bot
@@ -17,6 +17,12 @@ class LimitedBot(Bot):
         """
         coro = self.session(self, method, timeout=request_timeout)
         if hasattr(method, "chat_id") and not isinstance(method, GetChat):
+            chat_id: Union[str, int] = getattr(method, "chat_id")
+            if not isinstance(chat_id, int):
+                chat: ChatFullInfo = await self.get_chat(chat_id)
+                chat_id = chat.id
+                setattr(method, "chat_id", chat_id)
+
             return await self.caller.call(method.chat_id, coro)
         else:
             return await coro
